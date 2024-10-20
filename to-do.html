@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do App</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+header {
+    background-color: #8b6d6d;
+    color: #fff;
+    padding: 1em;
+    text-align: center;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2em;
+}
+
+.tasks {
+    background-color: #fff;
+    padding: 1em;
+    border: 1px solid #ddd;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height: 390px;
+    width: 40%;
+}
+
+#task-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.task {
+    padding: 0.5em;
+    border-bottom: 1px solid #ccc;
+  
+}
+
+.task:last-child {
+    border-bottom: none;
+}
+
+.task input[type="checkbox"] {
+    margin-right: 0.5em;
+}
+
+.task label {
+    font-weight: bold;
+}
+
+#add-task-form {
+    padding: 1em;
+}
+
+#task-input {
+    width: 100%;
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    height: 70px;
+}
+
+#add-task-btn {
+    background-color: #8b6d6d;
+    color: #fff;
+    padding: 0.5em 1em;
+    border: none;
+    border-radius: 0.5em;
+    cursor: pointer;
+    margin-top:60px;
+    width: 40%;
+    height: 50px;
+}
+
+#add-task-btn:hover {
+    background-color: #a58080;
+}
+    </style>>
+</head>
+<body>
+    <header>
+        <h1>To-Do App</h1>
+    </header>
+    <main>
+        <section class="tasks">
+            <h2>Tasks</h2>
+            <ul id="task-list"></ul>
+            <form id="add-task-form">
+                <input type="text" id="task-input" placeholder="Add new task">
+                <button id="add-task-btn">Add</button>
+            </form>
+        </section>
+    </main>
+    <script>
+        const taskList = document.getElementById('task-list');
+const addTaskForm = document.getElementById('add-task-form');
+const taskInput = document.getElementById('task-input');
+
+let tasks = [];
+
+function renderTasks() {
+    taskList.innerHTML = '';
+    tasks.forEach((task, index) => {
+        const taskHTML = `
+            <li class="task">
+                <input type="checkbox" id="task-${index}" ${task.completed ? 'checked' : ''}>
+                <label for="task-${index}">${task.name}</label>
+                <button class="edit-task-btn" data-index="${index}">Edit</button>
+                <button class="delete-task-btn" data-index="${index}">Delete</button>
+            </li>
+        `;
+        taskList.insertAdjacentHTML('beforeend', taskHTML);
+    });
+}
+
+function addTask(task) {
+    tasks.push(task);
+    renderTasks();
+}
+
+function editTask(index, newName) {
+    tasks[index].name = newName;
+    renderTasks();
+}
+
+function deleteTask(index) {
+    tasks.splice(index, 1);
+    renderTasks();
+}
+
+addTaskForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const taskName = taskInput.value.trim();
+    if (taskName) {
+        addTask({ name: taskName, completed: false });
+        taskInput.value = '';
+    }
+});
+
+taskList.addEventListener('click', (e) => {
+    if (e.target.classList.contains('edit-task-btn')) {
+        const index = e.target.dataset.index;
+        const newName = prompt('Enter new task name:');
+        if (newName) {
+            editTask(index, newName);
+        }
+    } else if (e.target.classList.contains('delete-task-btn')) {
+        const index = e.target.dataset.index;
+        deleteTask(index);
+    }
+});
+
+taskList.addEventListener('change', (e) => {
+    if (e.target.type === 'checkbox') {
+        const index = e.target.dataset.index;
+        tasks[index].completed = e.target.checked;
+        renderTasks();
+    }
+});
+    </script>
+</body>
+</html>
